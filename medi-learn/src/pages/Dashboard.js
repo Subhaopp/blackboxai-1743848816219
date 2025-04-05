@@ -1,6 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FaBookMedical, FaClock, FaChartLine, FaAward, FaHistory } from 'react-icons/fa';
 import { Bar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+// Register ChartJS components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const stats = [
   { id: 1, title: "Modules Completed", value: "8", icon: FaBookMedical, color: "bg-blue-100 text-blue-800" },
@@ -34,6 +53,15 @@ const quickModules = [
 ];
 
 const Dashboard = () => {
+  // Cleanup chart instances on unmount
+  useEffect(() => {
+    return () => {
+      const chart = ChartJS.getChart('progress-chart');
+      if (chart) {
+        chart.destroy();
+      }
+    };
+  }, []);
   return (
     <div className="space-y-8">
       <div>
@@ -68,6 +96,11 @@ const Dashboard = () => {
               options={{
                 responsive: true,
                 maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    position: 'top',
+                  },
+                },
                 scales: {
                   y: {
                     beginAtZero: true,
@@ -77,6 +110,7 @@ const Dashboard = () => {
                   }
                 }
               }}
+              id="progress-chart"
             />
           </div>
         </div>
